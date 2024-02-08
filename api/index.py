@@ -7,10 +7,6 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def home():
-    return jsonify(json_list)
-
-
-if __name__ == '__main__':
     url = 'https://www.htu.edu.cn/8955/list'
     json_list = {
         "code": 200,
@@ -41,7 +37,10 @@ if __name__ == '__main__':
                 'url': urls[i].get('href')
             }
             json_list['data'].append(json_dict)
-            # print(json_dict)
+            print(json_dict)
     # print(json_list)
+    return jsonify(json_list)
 
+
+if __name__ == '__main__':
     app.run(debug=True)
