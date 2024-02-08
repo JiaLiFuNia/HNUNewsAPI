@@ -19,7 +19,6 @@ def home():
 
     pages = 3
     id_num = 0
-    i = 0
 
     for page in range(pages):
         url_list = str(url) + str(page + 1) + ".htm"
