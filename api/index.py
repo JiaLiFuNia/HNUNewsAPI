@@ -17,7 +17,7 @@ def home():
             ]
     }
 
-    pages = 5
+    pages = 7
     id_num = 0
 
     for page in range(pages):
