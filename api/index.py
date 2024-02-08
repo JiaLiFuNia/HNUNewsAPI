@@ -17,7 +17,7 @@ def home():
             ]
     }
 
-    pages = 1
+    pages = 10
     id_num = 0
     i = 0
 
