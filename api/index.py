@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify
+import json
 
 app = Flask(__name__)
 
@@ -42,4 +43,5 @@ def home():
 
 
 if __name__ == '__main__':
+    app.json.ensure_ascii = False
     app.run(debug=True)
