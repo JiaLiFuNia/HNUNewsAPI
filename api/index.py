@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     for page in range(pages):
         url_list = str(url) + str(page + 1) + ".htm"
-        print(url_list)
+        # print(url_list)
         response = requests.get(url_list)
         soup = BeautifulSoup(response.content, 'html.parser')
         titles = urls = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_Title a')
@@ -41,7 +41,7 @@ if __name__ == '__main__':
                 'url': urls[i].get('href')
             }
             json_list['data'].append(json_dict)
-            print(json_dict)
-    print(json_list)
+            # print(json_dict)
+    # print(json_list)
 
     app.run(debug=True)
