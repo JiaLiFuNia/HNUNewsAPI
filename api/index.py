@@ -1,4 +1,6 @@
 import json
+import os
+
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify
@@ -7,7 +9,7 @@ app = Flask(__name__)
 
 
 def if_update(page, titles):
-    if page == 0:
+    if page == 0 and os.path.exists('../second_title.txt'):
         with open('../second_title.txt', 'r') as file:
             second_title = file.read()
         # print(second_title)
@@ -22,16 +24,8 @@ def if_update(page, titles):
 @app.route('/', methods=['GET'])
 def home():
     url = 'https://www.htu.edu.cn/8955/list'
-    json_list = {
-        "code": 200,
-        "message": "success",
-        "data":
-            [
-
-            ]
-    }
-
-    pages = 3
+    data = []
+    pages = 8
     id_num = 0
     ifUpdate = 0
     for page in range(pages):
@@ -43,9 +37,6 @@ def home():
         times = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate')
         # print(page)
         ifUpdate = if_update(page, titles)
-        if page == 0:
-            with open('../second_title.txt', 'w') as file:
-                file.write(titles[1].get('title'))
         if ifUpdate == 1:
             # print('break')
             break
@@ -58,19 +49,22 @@ def home():
                     'time': times[i].text,
                     'url': urls[i].get('href')
                 }
-                json_list['data'].append(json_dict)
-                # print(json_dict)
+                data.append(json_dict)
+                print(json_dict)
+        if page == 0:
+            with open('../second_title.txt', 'w') as file:
+                file.write(titles[1].get('title'))
         if id_num == 100:
             break
     if ifUpdate == 0:
         with open('../news.json', 'w', encoding='utf-8') as file:
-            file.write(json.dumps(json_list, ensure_ascii=False))
+            file.write(json.dumps({'data': data}, ensure_ascii=False))
     else:
         with open('../news.json', 'r', encoding='utf-8') as file:
-            json_list = json.loads(file.read())
+            data = json.loads(file.read())['data']
 
     app.json.ensure_ascii = False
-    return jsonify(json_list)
+    return jsonify({'code': 200, 'message': 'success', 'data': data})
 
 
 if __name__ == '__main__':
