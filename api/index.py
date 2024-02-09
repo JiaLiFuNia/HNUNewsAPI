@@ -61,6 +61,8 @@ def home():
                 }
                 json_list['data'].append(json_dict)
                 # print(json_dict)
+        if id_num == 100:
+            break
     if ifUpdate == 0:
         with open('../news.json', 'w', encoding='utf-8') as file:
             file.write(json.dumps(json_list, ensure_ascii=False))
