@@ -10,7 +10,6 @@ def if_update(page, titles):
     if page == 0:
         with open('../second_title.txt', 'r') as file:
             second_title = file.read()
-        file.close()
         # print(second_title)
         # print(titles[1].get('title'))
         if titles[1].get('title') == second_title:
@@ -66,11 +65,9 @@ def home():
     if ifUpdate == 0:
         with open('../news.json', 'w', encoding='utf-8') as file:
             file.write(json.dumps(json_list, ensure_ascii=False))
-        file.close()
     else:
         with open('../news.json', 'r', encoding='utf-8') as file:
             json_list = json.loads(file.read())
-        file.close()
 
     app.json.ensure_ascii = False
     return jsonify(json_list)
