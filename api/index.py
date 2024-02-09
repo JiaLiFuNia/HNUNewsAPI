@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 def if_update(page, titles):
     if page == 0:
-        with open('second_title.txt', 'r') as file:
+        with open('../second_title.txt', 'r') as file:
             second_title = file.read()
         file.close()
         # print(second_title)
@@ -45,7 +45,7 @@ def home():
         # print(page)
         ifUpdate = if_update(page, titles)
         if page == 0:
-            with open('second_title.txt', 'w') as file:
+            with open('../second_title.txt', 'w') as file:
                 file.write(titles[1].get('title'))
         if ifUpdate == 1:
             # print('break')
@@ -62,11 +62,11 @@ def home():
                 json_list['data'].append(json_dict)
                 # print(json_dict)
     if ifUpdate == 0:
-        with open('news.json', 'w', encoding='utf-8') as file:
+        with open('../news.json', 'w', encoding='utf-8') as file:
             file.write(json.dumps(json_list, ensure_ascii=False))
         file.close()
     else:
-        with open('news.json', 'r', encoding='utf-8') as file:
+        with open('../news.json', 'r', encoding='utf-8') as file:
             json_list = json.loads(file.read())
         file.close()
 
