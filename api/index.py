@@ -13,10 +13,10 @@ def if_update(page, titles):
         with open('second_title.txt', 'r') as file:
             second_title = file.read()
         file.close()
-        print(second_title)
-        print(titles[1].get('title'))
+        # print(second_title)
+        # print(titles[1].get('title'))
         if titles[1].get('title') == second_title:
-            print('yes')
+            # print('yes')
             return 1
     else:
         return 0
@@ -44,13 +44,13 @@ def home():
         soup = BeautifulSoup(response.content, 'html.parser')
         titles = urls = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_Title a')
         times = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate')
-        print(page)
+        # print(page)
         ifUpdate = if_update(page, titles)
         if page == 0:
             with open('second_title.txt', 'w') as file:
                 file.write(titles[1].get('title'))
         if ifUpdate == 1:
-            print('break')
+            # print('break')
             break
         else:
             for i in range(len(titles)):
@@ -62,7 +62,7 @@ def home():
                     'url': urls[i].get('href')
                 }
                 json_list['data'].append(json_dict)
-                print(json_dict)
+                # print(json_dict)
     if ifUpdate == 0:
         with open('news.json', 'w', encoding='utf-8') as file:
             file.write(json.dumps(json_list, ensure_ascii=False))
