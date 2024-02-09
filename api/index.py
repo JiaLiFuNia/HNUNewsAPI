@@ -34,7 +34,7 @@ def home():
             ]
     }
 
-    pages = 8
+    pages = 3
     id_num = 0
     ifUpdate = 0
     for page in range(pages):
