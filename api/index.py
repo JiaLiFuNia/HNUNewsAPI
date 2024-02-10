@@ -42,15 +42,8 @@ def geturl(url, id_num):
 
 @app.route('/', methods=['get'])
 def home():
-    url_1 = 'https://www.htu.edu.cn/8955/list'
-    url_2 = 'https://www.htu.edu.cn/8957/list'
-    url_3 = 'https://www.htu.edu.cn/xsygcs/list'
-    url_4 = 'https://www.htu.edu.cn/8954/list'
-    data_1 = geturl(url_1, 1000)
-    data_2 = geturl(url_2, 2000)
-    data_3 = geturl(url_3, 3000)
-    data_4 = geturl(url_4, 4000)
-    data = data_1 + data_2 + data_3 + data_4
+    url = 'https://www.htu.edu.cn/8955/list'
+    data = geturl(url, 1000)
     code = 200
     message = 'success'
     app.json.ensure_ascii = False
