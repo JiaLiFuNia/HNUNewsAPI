@@ -20,10 +20,6 @@ def geturl(url, id_num):
                 'div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_Title a')
             times = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate')
 
-            to_str = str(id_num)
-            str_len = len(to_str)
-            last_four = int(to_str[str_len - 3:str_len])
-
             for i in range(len(titles)):
                 id_num = id_num + 1
                 url_temp = urls[i].get('href')
@@ -37,10 +33,10 @@ def geturl(url, id_num):
                 }
                 data.append(json_dict)
                 print(json_dict)
+                to_str = str(id_num)  # 1100
+                last_four = int(to_str[-3:])
                 if last_four == 100:
                     break
-            if last_four == 100:
-                break
         return data
 
 
@@ -71,22 +67,22 @@ def news():
         url = 'https://www.htu.edu.cn/8955/list'
         code = 200
         message = '通知公告'
-        data = geturl(url, 100)
+        data = geturl(url, 1000)
     if newsKind == 'bn':
         url = 'https://www.htu.edu.cn/8957/list'
         code = 200
         message = '院部动态'
-        data = geturl(url, 200)
+        data = geturl(url, 2000)
     if newsKind == 'cn':
         url = 'https://www.htu.edu.cn/xsygcs/list'
         code = 200
         message = '学术预告'
-        data = geturl(url, 300)
+        data = geturl(url, 3000)
     if newsKind == 'dn':
         url = 'https://www.htu.edu.cn/8954/list'
         code = 200
         message = '师大新闻'
-        data = geturl(url, 400)
+        data = geturl(url, 4000)
 
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
