@@ -49,30 +49,30 @@ def an():
 
 
 def bn():
-    url = 'https://www.htu.edu.cn/8955/list'
+    url = 'https://www.htu.edu.cn/8957/list'
     data = geturl(url, 2000)
     code = 200
     message = '院部动态'
     app.json.ensure_ascii = False
-    return jsonify({'code': code, 'message': message, 'data': data})
+    return code, message, data
 
 
 def cn():
-    url = 'https://www.htu.edu.cn/8955/list'
+    url = 'https://www.htu.edu.cn/xsygcs/list'
     data = geturl(url, 3000)
     code = 200
     message = '学术预告'
     app.json.ensure_ascii = False
-    return jsonify({'code': code, 'message': message, 'data': data})
+    return code, message, data
 
 
 def dn():
-    url = 'https://www.htu.edu.cn/8955/list'
+    url = 'https://www.htu.edu.cn/8954/list'
     data = geturl(url, 4000)
     code = 200
     message = '师大新闻'
     app.json.ensure_ascii = False
-    return jsonify({'code': code, 'message': message, 'data': data})
+    return code, message, data
 
 
 @app.route("/<string:kind>", methods=['get'])
@@ -83,11 +83,11 @@ def index(kind):
     if kind == 'an':
         code, message, data = an()
     if kind == 'bn':
-        code, message, data = an()
+        code, message, data = bn()
     if kind == 'cn':
-        code, message, data = an()
+        code, message, data = cn()
     if kind == 'dn':
-        code, message, data = an()
+        code, message, data = dn()
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
