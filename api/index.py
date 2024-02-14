@@ -91,7 +91,7 @@ def home(kind):
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
-@app.route('/news', methods=['post'])
+@app.route('/', methods=['post'])
 def getnews():
     newsKind = request.values.get("newsKind")
     code = 201
