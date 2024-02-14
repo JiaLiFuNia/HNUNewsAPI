@@ -75,18 +75,18 @@ def dn():
     return code, message, data
 
 
-@app.route("/<string:kind>", methods=['get'])
-def home(kind):
+@app.route("/", methods=['get'])
+def home(newsKind):
     code = 201
     message = '非法请求'
     data = []
-    if kind == 'an':
+    if newsKind == 'an':
         code, message, data = an()
-    if kind == 'bn':
+    if newsKind == 'bn':
         code, message, data = bn()
-    if kind == 'cn':
+    if newsKind == 'cn':
         code, message, data = cn()
-    if kind == 'dn':
+    if newsKind == 'dn':
         code, message, data = dn()
     return jsonify({'code': code, 'message': message, 'data': data})
 
