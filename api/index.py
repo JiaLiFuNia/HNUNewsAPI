@@ -39,17 +39,15 @@ def geturl(url, limit):
         return data
 
 
-@app.route('/an', methods=['get'])
 def an():
     url = 'https://www.htu.edu.cn/8955/list'
     data = geturl(url, 1000)
     code = 200
     message = '通知公告'
     app.json.ensure_ascii = False
-    return jsonify({'code': code, 'message': message, 'data': data})
+    return code, message, data
 
 
-@app.route('/bn', methods=['get'])
 def bn():
     url = 'https://www.htu.edu.cn/8955/list'
     data = geturl(url, 2000)
@@ -59,7 +57,6 @@ def bn():
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
-@app.route('/cn', methods=['get'])
 def cn():
     url = 'https://www.htu.edu.cn/8955/list'
     data = geturl(url, 3000)
@@ -69,13 +66,28 @@ def cn():
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
-@app.route('/dn', methods=['get'])
 def dn():
     url = 'https://www.htu.edu.cn/8955/list'
     data = geturl(url, 4000)
     code = 200
     message = '师大新闻'
     app.json.ensure_ascii = False
+    return jsonify({'code': code, 'message': message, 'data': data})
+
+
+@app.route("/<string:kind>", methods=['get'])
+def index(kind):
+    code = 201
+    message = '非法请求'
+    data = []
+    if kind == 'an':
+        code, message, data = an()
+    if kind == 'bn':
+        code, message, data = an()
+    if kind == 'cn':
+        code, message, data = an()
+    if kind == 'dn':
+        code, message, data = an()
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
