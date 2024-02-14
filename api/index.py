@@ -88,23 +88,6 @@ def home(newsKind):
         code, message, data = cn()
     if newsKind == 'dn':
         code, message, data = dn()
-    return jsonify({'code': code, 'message': message, 'data': data})
-
-
-@app.route('/', methods=['post'])
-def getnews():
-    newsKind = request.values.get("newsKind")
-    code = 201
-    message = '非法请求'
-    data = []
-    if newsKind == 'an':
-        code, message, data = an()
-    if newsKind == 'bn':
-        code, message, data = bn()
-    if newsKind == 'cn':
-        code, message, data = cn()
-    if newsKind == 'dn':
-        code, message, data = dn()
     if newsKind == 'tabs':
         code = 200
         message = 'success'
@@ -122,6 +105,23 @@ def getnews():
                 "id": "3"
             }
         ]
+    return jsonify({'code': code, 'message': message, 'data': data})
+
+
+@app.route('/', methods=['post'])
+def getnews():
+    newsKind = request.values.get("newsKind")
+    code = 201
+    message = '非法请求'
+    data = []
+    if newsKind == 'an':
+        code, message, data = an()
+    if newsKind == 'bn':
+        code, message, data = bn()
+    if newsKind == 'cn':
+        code, message, data = cn()
+    if newsKind == 'dn':
+        code, message, data = dn()
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
