@@ -105,6 +105,23 @@ def getnews():
         code, message, data = cn()
     if newsKind == 'dn':
         code, message, data = dn()
+    if newsKind == 'tabs':
+        code = 200
+        message = 'success'
+        data = [
+            {
+                "title": "通知公告",
+                "id": "1"
+            },
+            {
+                "title": "师大新闻",
+                "id": "2"
+            },
+            {
+                "title": "院部动态",
+                "id": "3"
+            }
+        ]
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
