@@ -39,18 +39,48 @@ def geturl(url, limit):
         return data
 
 
-# @app.route('/', methods=['get'])
-def home():
+@app.route('/an', methods=['get'])
+def an():
     url = 'https://www.htu.edu.cn/8955/list'
     data = geturl(url, 1000)
     code = 200
-    message = 'success'
+    message = '通知公告'
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
-@app.route('/', methods=['post'])
-def home():
+@app.route('/bn', methods=['get'])
+def bn():
+    url = 'https://www.htu.edu.cn/8955/list'
+    data = geturl(url, 2000)
+    code = 200
+    message = '院部动态'
+    app.json.ensure_ascii = False
+    return jsonify({'code': code, 'message': message, 'data': data})
+
+
+@app.route('/cn', methods=['get'])
+def cn():
+    url = 'https://www.htu.edu.cn/8955/list'
+    data = geturl(url, 3000)
+    code = 200
+    message = '学术预告'
+    app.json.ensure_ascii = False
+    return jsonify({'code': code, 'message': message, 'data': data})
+
+
+@app.route('/dn', methods=['get'])
+def dn():
+    url = 'https://www.htu.edu.cn/8955/list'
+    data = geturl(url, 4000)
+    code = 200
+    message = '师大新闻'
+    app.json.ensure_ascii = False
+    return jsonify({'code': code, 'message': message, 'data': data})
+
+
+@app.route('/news', methods=['post'])
+def news():
     newsKind = request.values.get("newsKind")
     code = 201
     message = '非法请求'
