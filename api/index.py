@@ -80,7 +80,7 @@ def dn():
 
 
 @app.route('/news', methods=['post'])
-def news():
+def getnews():
     newsKind = request.values.get("newsKind")
     code = 201
     message = '非法请求'
