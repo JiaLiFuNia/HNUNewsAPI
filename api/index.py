@@ -5,9 +5,10 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 
-def geturl(url, id_num):
+def geturl(url, limit):
     data = []
     pages = 8
+    id_num = limit
     if url == "":
         return data
     else:
@@ -33,14 +34,12 @@ def geturl(url, id_num):
                 }
                 data.append(json_dict)
                 print(json_dict)
-                to_str = str(id_num)  # 1100
-                last_four = int(to_str[-3:])
-                if last_four == 100:
+                if id_num - limit == 100:
                     break
         return data
 
 
-@app.route('/', methods=['get'])
+# @app.route('/', methods=['get'])
 def home():
     url = 'https://www.htu.edu.cn/8955/list'
     data = geturl(url, 1000)
@@ -50,8 +49,8 @@ def home():
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
-@app.route('/news', methods=['post'])
-def news():
+@app.route('/', methods=['post'])
+def home():
     newsKind = request.values.get("newsKind")
     code = 201
     message = '非法请求'
