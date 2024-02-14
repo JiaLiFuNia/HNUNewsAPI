@@ -75,7 +75,7 @@ def dn():
     return code, message, data
 
 
-@app.route("/", methods=['get'])
+@app.route("/<string:newsKind>", methods=['get'])
 def home(newsKind):
     code = 201
     message = '非法请求'
