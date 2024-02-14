@@ -98,26 +98,13 @@ def getnews():
     message = '非法请求'
     data = []
     if newsKind == 'an':
-        url = 'https://www.htu.edu.cn/8955/list'
-        code = 200
-        message = '通知公告'
-        data = geturl(url, 1000)
+        code, message, data = an()
     if newsKind == 'bn':
-        url = 'https://www.htu.edu.cn/8957/list'
-        code = 200
-        message = '院部动态'
-        data = geturl(url, 2000)
+        code, message, data = bn()
     if newsKind == 'cn':
-        url = 'https://www.htu.edu.cn/xsygcs/list'
-        code = 200
-        message = '学术预告'
-        data = geturl(url, 3000)
+        code, message, data = cn()
     if newsKind == 'dn':
-        url = 'https://www.htu.edu.cn/8954/list'
-        code = 200
-        message = '师大新闻'
-        data = geturl(url, 4000)
-
+        code, message, data = dn()
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
