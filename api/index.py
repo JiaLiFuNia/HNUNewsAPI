@@ -76,7 +76,7 @@ def dn():
 
 
 @app.route("/<string:kind>", methods=['get'])
-def index(kind):
+def home(kind):
     code = 201
     message = '非法请求'
     data = []
