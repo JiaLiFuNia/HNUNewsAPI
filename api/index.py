@@ -22,10 +22,13 @@ def ifUpdate(limit, new_title):
 def json_data(type_id):
     res_data = requests.get('https://raw.githubusercontent.com/JiaLiFuNia/HNUNewsAPI/master/api/news.json').json()['data']
     data = []
-    for i in res_data:
-        if str(i['id'])[0] == str(type_id):
-            data.append(i)
-    return data
+    if type_id == 0:
+        return res_data
+    else:
+        for i in res_data:
+            if str(i['id'])[0] == str(type_id):
+                data.append(i)
+        return data
 
 
 def geturl(url, limit, type_id):
@@ -134,6 +137,10 @@ def home(types):
                 "id": "3"
             }
         ]
+    if types == 'all':
+        code = 200
+        message = 'success'
+        data = json_data(0)
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
@@ -151,6 +158,10 @@ def getnews():
         code, message, data = cn()
     if types == 'dn':
         code, message, data = dn()
+    if types == 'all':
+        code = 200
+        message = 'success'
+        data = json_data(0)
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
