@@ -1,9 +1,19 @@
+import json
+
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, request
 import os
 
 app = Flask(__name__)
+
+
+def ifUpdate(new_title):
+    last_title = os.environ.get('LAST_TITLE_KEY')
+    if last_title == new_title:
+        return True
+    else:
+        return False
 
 
 def geturl(url, limit):
@@ -21,19 +31,18 @@ def geturl(url, limit):
             titles = urls = soup.select(
                 'div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_Title a')
             times = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate')
-
+            if page == 1 and ifUpdate(titles[0]):
+                break
             for i in range(len(titles)):
                 id_num = id_num + 1
                 url_temp = urls[i].get('href')
                 if url_temp[0] != 'h':
                     url_temp = 'https://www.htu.edu.cn' + url_temp
-                os.environ['LAST_TITLE_KEY'] = '456'
-                a = os.environ.get('LAST_TITLE_KEY')
                 json_dict = {
                     'id': id_num,
                     'title': titles[i].get('title'),
                     'time': times[i].text,
-                    'url': a
+                    'url': url_temp
                 }
                 data.append(json_dict)
                 print(json_dict)
@@ -129,5 +138,14 @@ def getnews():
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
+def save_all_news():
+    data = an()[2] + bn()[2] + cn()[2] + dn()[2]
+    json_dict = {'code': 200, 'message': 'success', 'data': data}
+    with open("news.json", 'w', encoding='utf-8') as file:
+        file.write(json.dumps(json_dict, ensure_ascii=False))
+    print('success')
+
+
 if __name__ == '__main__':
+    save_all_news()
     app.run(debug=True)
