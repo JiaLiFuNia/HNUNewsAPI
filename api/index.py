@@ -8,11 +8,12 @@ import os
 app = Flask(__name__)
 
 
-def ifUpdate(new_title):
-    last_title = os.environ.get('LAST_TITLE_KEY', '关于组织收看学习《法治宣传教育课程》的通知')
+def ifUpdate(limit, new_title):
+    last_title = [os.environ.get('LAST_TITLE_AN_KEY', '1'), os.environ.get('LAST_TITLE_BN_KEY', '2'), os.environ.get('LAST_TITLE_CN_KEY', '3'), os.environ.get('LAST_TITLE_DN_KEY','4')]
     print(last_title)
+    print(last_title[int(limit / 1000) - 1])
     print(new_title)
-    if last_title == new_title:
+    if last_title[int(limit / 1000) - 1] == new_title:
         return True
     else:
         return False
@@ -22,7 +23,7 @@ def json_data(type_id):
     res_data = requests.get('https://raw.githubusercontent.com/JiaLiFuNia/HNUNewsAPI/master/api/news.json').json()['data']
     data = []
     for i in res_data:
-        if i['id'][0] == str(type_id):
+        if str(i['id'])[0] == str(type_id):
             data.append(i)
     return data
 
@@ -35,7 +36,6 @@ def geturl(url, limit, type_id):
         return data
     else:
         for page in range(pages):
-            print(page)
             url_list = str(url) + str(page + 1) + ".htm"
             # print(url_list)
             response = requests.get(url_list)
@@ -44,7 +44,7 @@ def geturl(url, limit, type_id):
                 'div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_Title a')
             times = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate')
             if page == 0:
-                if ifUpdate(titles[4].get('title')):
+                if ifUpdate(limit, titles[4].get('title')):
                     data = json_data(type_id)
                     break
                 else:
