@@ -170,6 +170,7 @@ def getAllNews():
     code = 200
     message = 'success'
     data = json_data(0)
+    app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
