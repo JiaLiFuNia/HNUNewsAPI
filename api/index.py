@@ -147,5 +147,5 @@ def save_all_news():
 
 
 if __name__ == '__main__':
-    save_all_news()
+    # save_all_news()
     app.run(debug=True)
