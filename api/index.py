@@ -41,11 +41,11 @@ def geturl(url, limit, type_id):
                 'div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_Title a')
             times = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate')
             if page == 1:
-                if ifUpdate(titles[0].get('title')):
+                if ifUpdate(titles[4].get('title')):
                     data = json_data(type_id)
                     break
                 else:
-                    os.environ['LAST_TITLE_KEY'] = titles[0].get('title')
+                    os.environ['LAST_TITLE_KEY'] = titles[4].get('title')
                     pass
             for i in range(len(titles)):
                 id_num = id_num + 1
