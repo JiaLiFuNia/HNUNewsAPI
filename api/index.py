@@ -34,7 +34,7 @@ def geturl(url, limit):
                 }
                 data.append(json_dict)
                 print(json_dict)
-                if id_num - limit == 100:
+                if id_num - limit == 0:
                     break
         return data
 
