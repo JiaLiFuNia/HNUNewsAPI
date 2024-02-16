@@ -11,7 +11,6 @@ app = Flask(__name__)
 def ifUpdate(limit, new_title):
     last_title = [os.environ.get('LAST_TITLE_AN_KEY', '1'), os.environ.get('LAST_TITLE_BN_KEY', '2'), os.environ.get('LAST_TITLE_CN_KEY', '3'), os.environ.get('LAST_TITLE_DN_KEY','4')]
     print(last_title)
-    print(last_title[int(limit / 1000) - 1])
     print(new_title)
     if last_title[int(limit / 1000) - 1] == new_title:
         return True
