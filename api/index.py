@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 def geturl(url, limit):
     data = []
-    pages = 10
+    pages = 8
     id_num = limit
     if url == "":
         return data
@@ -34,7 +34,7 @@ def geturl(url, limit):
                 }
                 data.append(json_dict)
                 print(json_dict)
-                if id_num - limit == 0:
+                if id_num - limit == 100:
                     break
         return data
 
