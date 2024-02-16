@@ -140,6 +140,9 @@ def home(types):
         code = 200
         message = 'success'
         data = json_data(0)
+    if types == "":
+        code = 201
+        message = '非法请求'
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
