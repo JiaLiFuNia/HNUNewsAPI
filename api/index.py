@@ -16,7 +16,16 @@ def ifUpdate(new_title):
         return False
 
 
-def geturl(url, limit):
+def json_data(type_id):
+    res_data = requests.get('https://raw.githubusercontent.com/JiaLiFuNia/HNUNewsAPI/master/api/news.json').json()['data']
+    data = []
+    for i in res_data:
+        if i['id'][0] == str(type_id):
+            data.append(i)
+    return data
+
+
+def geturl(url, limit, type_id):
     data = []
     pages = 8
     id_num = limit
@@ -31,8 +40,13 @@ def geturl(url, limit):
             titles = urls = soup.select(
                 'div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_Title a')
             times = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate')
-            if page == 1 and ifUpdate(titles[0]):
-                break
+            if page == 1:
+                if ifUpdate(titles[0].get('title')):
+                    data = json_data(type_id)
+                    break
+                else:
+                    os.environ['LAST_TITLE_KEY'] = titles[0].get('title')
+                    pass
             for i in range(len(titles)):
                 id_num = id_num + 1
                 url_temp = urls[i].get('href')
@@ -53,7 +67,7 @@ def geturl(url, limit):
 
 def an():
     url = 'https://www.htu.edu.cn/8955/list'
-    data = geturl(url, 1000)
+    data = geturl(url, 1000, 1)
     code = 200
     message = '通知公告'
     app.json.ensure_ascii = False
@@ -62,7 +76,7 @@ def an():
 
 def bn():
     url = 'https://www.htu.edu.cn/8957/list'
-    data = geturl(url, 2000)
+    data = geturl(url, 2000, 2)
     code = 200
     message = '院部动态'
     app.json.ensure_ascii = False
@@ -71,7 +85,7 @@ def bn():
 
 def cn():
     url = 'https://www.htu.edu.cn/xsygcs/list'
-    data = geturl(url, 3000)
+    data = geturl(url, 3000, 3)
     code = 200
     message = '学术预告'
     app.json.ensure_ascii = False
@@ -80,7 +94,7 @@ def cn():
 
 def dn():
     url = 'https://www.htu.edu.cn/8954/list'
-    data = geturl(url, 4000)
+    data = geturl(url, 4000, 4)
     code = 200
     message = '师大新闻'
     app.json.ensure_ascii = False
