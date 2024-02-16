@@ -27,6 +27,7 @@ def geturl(url, limit):
                 url_temp = urls[i].get('href')
                 if url_temp[0] != 'h':
                     url_temp = 'https://www.htu.edu.cn' + url_temp
+                os.environ['LAST_TITLE_KEY'] = '456'
                 a = os.environ.get('LAST_TITLE_KEY')
                 json_dict = {
                     'id': id_num,
