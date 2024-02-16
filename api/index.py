@@ -5,7 +5,7 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 
-def geturl(url, limit, types):
+def geturl(url, limit):
     data = []
     pages = 8
     id_num = limit
@@ -30,8 +30,7 @@ def geturl(url, limit, types):
                     'id': id_num,
                     'title': titles[i].get('title'),
                     'time': times[i].text,
-                    'url': url_temp,
-                    'type': types
+                    'url': url_temp
                 }
                 data.append(json_dict)
                 print(json_dict)
@@ -42,7 +41,7 @@ def geturl(url, limit, types):
 
 def an():
     url = 'https://www.htu.edu.cn/8955/list'
-    data = geturl(url, 1000, '通知公告')
+    data = geturl(url, 1000)
     code = 200
     message = '通知公告'
     app.json.ensure_ascii = False
@@ -51,7 +50,7 @@ def an():
 
 def bn():
     url = 'https://www.htu.edu.cn/8957/list'
-    data = geturl(url, 2000, '院部动态')
+    data = geturl(url, 2000)
     code = 200
     message = '院部动态'
     app.json.ensure_ascii = False
@@ -60,7 +59,7 @@ def bn():
 
 def cn():
     url = 'https://www.htu.edu.cn/xsygcs/list'
-    data = geturl(url, 3000, '学术预告')
+    data = geturl(url, 3000)
     code = 200
     message = '学术预告'
     app.json.ensure_ascii = False
@@ -69,7 +68,7 @@ def cn():
 
 def dn():
     url = 'https://www.htu.edu.cn/8954/list'
-    data = geturl(url, 4000, '师大新闻')
+    data = geturl(url, 4000)
     code = 200
     message = '师大新闻'
     app.json.ensure_ascii = False
