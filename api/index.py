@@ -75,20 +75,20 @@ def dn():
     return code, message, data
 
 
-@app.route("/<string:newsKind>", methods=['get'])
-def home(newsKind):
+@app.route("/<string:types>", methods=['get'])
+def home(types):
     code = 201
     message = '非法请求'
     data = []
-    if newsKind == 'an':
+    if types == 'an':
         code, message, data = an()
-    if newsKind == 'bn':
+    if types == 'bn':
         code, message, data = bn()
-    if newsKind == 'cn':
+    if types == 'cn':
         code, message, data = cn()
-    if newsKind == 'dn':
+    if types == 'dn':
         code, message, data = dn()
-    if newsKind == 'tabs':
+    if types == 'tabs':
         code = 200
         message = 'success'
         data = [
@@ -110,17 +110,17 @@ def home(newsKind):
 
 @app.route('/', methods=['post'])
 def getnews():
-    newsKind = request.values.get("newsKind")
+    types = request.values.get("types")
     code = 201
     message = '非法请求'
     data = []
-    if newsKind == 'an':
+    if types == 'an':
         code, message, data = an()
-    if newsKind == 'bn':
+    if types == 'bn':
         code, message, data = bn()
-    if newsKind == 'cn':
+    if types == 'cn':
         code, message, data = cn()
-    if newsKind == 'dn':
+    if types == 'dn':
         code, message, data = dn()
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
