@@ -27,11 +27,12 @@ def geturl(url, limit):
                 url_temp = urls[i].get('href')
                 if url_temp[0] != 'h':
                     url_temp = 'https://www.htu.edu.cn' + url_temp
+                a = os.environ.get('LAST_TITLE_KEY')
                 json_dict = {
                     'id': id_num,
                     'title': titles[i].get('title'),
                     'time': times[i].text,
-                    'url': url_temp
+                    'url': a
                 }
                 data.append(json_dict)
                 print(json_dict)
@@ -128,6 +129,4 @@ def getnews():
 
 
 if __name__ == '__main__':
-    a = os.environ.get('API_URL')
-    print(a)
     app.run(debug=True)
