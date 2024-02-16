@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 def geturl(url, limit):
     data = []
-    pages = 8
+    pages = 10
     id_num = limit
     if url == "":
         return data
