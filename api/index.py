@@ -9,7 +9,9 @@ app = Flask(__name__)
 
 
 def ifUpdate(new_title):
-    last_title = os.environ.get('LAST_TITLE_KEY')
+    last_title = os.environ.get('LAST_TITLE_KEY', '关于组织收看学习《法治宣传教育课程》的通知')
+    print(last_title)
+    print(new_title)
     if last_title == new_title:
         return True
     else:
@@ -33,6 +35,7 @@ def geturl(url, limit, type_id):
         return data
     else:
         for page in range(pages):
+            print(page)
             url_list = str(url) + str(page + 1) + ".htm"
             # print(url_list)
             response = requests.get(url_list)
@@ -40,7 +43,7 @@ def geturl(url, limit, type_id):
             titles = urls = soup.select(
                 'div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_Title a')
             times = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate')
-            if page == 1:
+            if page == 0:
                 if ifUpdate(titles[4].get('title')):
                     data = json_data(type_id)
                     break
