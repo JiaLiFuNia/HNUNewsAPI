@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, request
+import os
 
 app = Flask(__name__)
 
@@ -127,4 +128,6 @@ def getnews():
 
 
 if __name__ == '__main__':
+    a = os.environ.get('API_URL')
+    print(a)
     app.run(debug=True)
