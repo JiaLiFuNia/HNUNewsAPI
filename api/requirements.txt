@@ -1,4 +1,3 @@
 requests
-os
 beautifulsoup4
 flask
