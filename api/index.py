@@ -1,15 +1,16 @@
 import json
+import os
 
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask, jsonify, request
-import os
 
 app = Flask(__name__)
 
 
 def ifUpdate(limit, new_title):
-    last_title = [os.environ.get('LAST_TITLE_AN_KEY', '1'), os.environ.get('LAST_TITLE_BN_KEY', '2'), os.environ.get('LAST_TITLE_CN_KEY', '3'), os.environ.get('LAST_TITLE_DN_KEY','4')]
+    last_title = [os.environ.get('LAST_TITLE_AN_KEY', '1'), os.environ.get('LAST_TITLE_BN_KEY', '2'),
+                  os.environ.get('LAST_TITLE_CN_KEY', '3'), os.environ.get('LAST_TITLE_DN_KEY', '4')]
     print(last_title)
     print(new_title)
     if last_title[int(limit / 1000) - 1] == new_title:
@@ -19,7 +20,8 @@ def ifUpdate(limit, new_title):
 
 
 def json_data(type_id):
-    res_data = requests.get('https://raw.githubusercontent.com/JiaLiFuNia/HNUNewsAPI/master/api/news.json').json()['data']
+    res_data = requests.get('https://raw.githubusercontent.com/JiaLiFuNia/HNUNewsAPI/master/api/news.json').json()[
+        'data']
     data = []
     if type_id == 0:
         return res_data
@@ -51,7 +53,8 @@ def geturl(url, limit, type_id):
                     break
                 else:
                     os.environ['LAST_TITLE_KEY'] = titles[4].get('title')
-                    pass
+            else:
+                pass
             for i in range(len(titles)):
                 id_num = id_num + 1
                 url_temp = urls[i].get('href')
@@ -183,5 +186,5 @@ def save_all_news():
 
 
 if __name__ == '__main__':
-    # save_all_news()
+    save_all_news()
     app.run(debug=True)
