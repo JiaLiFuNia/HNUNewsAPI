@@ -7,10 +7,14 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
+LAST_TITLE_KEY = ['LAST_TITLE_AN_KEY', 'LAST_TITLE_BN_KEY', 'LAST_TITLE_CN_KEY', 'LAST_TITLE_DN_KEY',
+                  'LAST_TITLE_EN_KEY']
+
 
 def ifUpdate(limit, new_title):
-    last_title = [os.environ.get('LAST_TITLE_AN_KEY', '1'), os.environ.get('LAST_TITLE_BN_KEY', '2'),
-                  os.environ.get('LAST_TITLE_CN_KEY', '3'), os.environ.get('LAST_TITLE_DN_KEY', '4')]
+    last_title = [os.environ.get(LAST_TITLE_KEY[0], '1'), os.environ.get(LAST_TITLE_KEY[1], '2'),
+                  os.environ.get(LAST_TITLE_KEY[2], '3'), os.environ.get(LAST_TITLE_KEY[3], '4'),
+                  os.environ.get(LAST_TITLE_KEY[4], '5')]
     print(last_title)
     print(new_title)
     if last_title[int(limit / 1000) - 1] == new_title:
@@ -19,20 +23,20 @@ def ifUpdate(limit, new_title):
         return False
 
 
-def json_data(type_id):
+def json_data(limit):
     res_data = requests.get('https://raw.githubusercontent.com/JiaLiFuNia/HNUNewsAPI/master/api/news.json').json()[
         'data']
     data = []
-    if type_id == 0:
+    if limit == 0:
         return res_data
     else:
         for i in res_data:
-            if str(i['id'])[0] == str(type_id):
+            if str(i['id'])[0] == str(limit)[0]:
                 data.append(i)
         return data
 
 
-def geturl(url, limit, type_id):
+def geturl(url, limit):
     data = []
     pages = 8
     id_num = limit
@@ -49,10 +53,10 @@ def geturl(url, limit, type_id):
             times = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate')
             if page == 0:
                 if ifUpdate(limit, titles[4].get('title')):
-                    data = json_data(type_id)
+                    data = json_data(limit)
                     break
                 else:
-                    os.environ['LAST_TITLE_KEY'] = titles[4].get('title')
+                    os.environ[LAST_TITLE_KEY[int(limit / 1000) - 1]] = titles[4].get('title')
             else:
                 pass
             for i in range(len(titles)):
@@ -75,7 +79,7 @@ def geturl(url, limit, type_id):
 
 def an():
     url = 'https://www.htu.edu.cn/8955/list'
-    data = geturl(url, 1000, 1)
+    data = geturl(url, 1000)
     code = 200
     message = '通知公告'
     app.json.ensure_ascii = False
@@ -84,7 +88,7 @@ def an():
 
 def bn():
     url = 'https://www.htu.edu.cn/8957/list'
-    data = geturl(url, 2000, 2)
+    data = geturl(url, 2000)
     code = 200
     message = '院部动态'
     app.json.ensure_ascii = False
@@ -93,7 +97,7 @@ def bn():
 
 def cn():
     url = 'https://www.htu.edu.cn/xsygcs/list'
-    data = geturl(url, 3000, 3)
+    data = geturl(url, 3000)
     code = 200
     message = '学术预告'
     app.json.ensure_ascii = False
@@ -102,9 +106,18 @@ def cn():
 
 def dn():
     url = 'https://www.htu.edu.cn/8954/list'
-    data = geturl(url, 4000, 4)
+    data = geturl(url, 4000)
     code = 200
     message = '师大新闻'
+    app.json.ensure_ascii = False
+    return code, message, data
+
+
+def en():
+    url = 'https://www.htu.edu.cn/9008/list'
+    data = geturl(url, 5000)
+    code = 200
+    message = '媒体师大'
     app.json.ensure_ascii = False
     return code, message, data
 
@@ -121,6 +134,8 @@ def home(types):
     if types == 'cn':
         code, message, data = cn()
     if types == 'dn':
+        code, message, data = dn()
+    if types == 'en':
         code, message, data = dn()
     if types == 'tabs':
         code = 200
@@ -160,6 +175,8 @@ def getnews():
         code, message, data = cn()
     if types == 'dn':
         code, message, data = dn()
+    if types == 'en':
+        code, message, data = dn()
     if types == 'all':
         code = 200
         message = 'success'
@@ -178,7 +195,7 @@ def getAllNews():
 
 
 def save_all_news():
-    data = an()[2] + bn()[2] + cn()[2] + dn()[2]
+    data = an()[2] + bn()[2] + cn()[2] + dn()[2] + en()[2]
     json_dict = {'code': 200, 'message': 'success', 'data': data}
     with open("news.json", 'w', encoding='utf-8') as file:
         file.write(json.dumps(json_dict, ensure_ascii=False))
