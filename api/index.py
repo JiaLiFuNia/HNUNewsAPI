@@ -176,7 +176,7 @@ def getnews():
     if types == 'dn':
         code, message, data = dn()
     if types == 'en':
-        code, message, data = dn()
+        code, message, data = en()
     if types == 'all':
         code = 200
         message = 'success'
