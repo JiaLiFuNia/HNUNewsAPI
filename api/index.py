@@ -116,7 +116,7 @@ def xn(types, count, rule):
     data = []
     try:
         index = ALL_TYPES.index(types)
-    except:
+    except IndexError:
         index = -1
     if index != -1:
         data = geturl(URLS[index], LIMIT[index], count, rule)
