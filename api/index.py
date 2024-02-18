@@ -110,15 +110,18 @@ def geturl(url, limit, count, rule):
 
 
 # 类型 数量 规则
-def xn(types, count, rule):
+def xn(types: str, count: int):
     code = 201
     message = '非法请求'
     data = []
+    rule = 0
     try:
         index = ALL_TYPES.index(types)
     except IndexError:
         index = -1
     if index != -1:
+        if types[-1] == 'j':
+            rule = 1
         data = geturl(URLS[index], LIMIT[index], count, rule)
         code = 200
         message = MESSAGES[index]
@@ -153,7 +156,7 @@ def xn(types, count, rule):
 # @GET
 @app.route("/<string:types>", methods=['get'])
 def home(types):
-    code, message, data = xn(types, 0, 0)
+    code, message, data = xn(types, 0)
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
@@ -163,7 +166,7 @@ def home(types):
 def getnews():
     types = request.values.get("types")
     count = int(request.values.get("count"))
-    code, message, data = xn(types, count, 0)
+    code, message, data = xn(types, count)
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
@@ -183,20 +186,24 @@ def getAllNews():
 def get_jw_news():
     types = request.values.get("types")
     count = int(request.values.get("count"))
-    code, message, data = xn(types, count, 1)
+    code, message, data = xn(types, count)
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
 # 保存文件
 def save_all_news():
-    data = xn('an', 0, 0)[2] + xn('bn', 0, 0)[2] + xn('cn', 0, 0)[2] + xn('dn', 0, 0)[2] + xn('en', 0, 0)[2]
+    data = []
+    for i in range(len(ALL_TYPES)):
+        data = data + xn(ALL_TYPES[i], 0)[2]
     json_dict = {'code': 200, 'message': 'success', 'data': data}
     with open("news.json", 'w', encoding='utf-8') as file:
         file.write(json.dumps(json_dict, ensure_ascii=False))
     print('success')
 
 
+save_all_news()
+
+
 if __name__ == '__main__':
-    # save_all_news()
     app.run(debug=True)
