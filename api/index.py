@@ -8,13 +8,32 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 LAST_TITLE_KEY = ['LAST_TITLE_AN_KEY', 'LAST_TITLE_BN_KEY', 'LAST_TITLE_CN_KEY', 'LAST_TITLE_DN_KEY',
-                  'LAST_TITLE_EN_KEY']
+                  'LAST_TITLE_EN_KEY', 'LAST_TITLE_EN_KEY', 'LAST_TITLE_EN_KEY', 'LAST_TITLE_EN_KEY']
+ALL_TYPES = ['an', 'bn', 'cn', 'dn', 'aj', 'bj', 'cj', 'dj']
+LIMIT = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000]
+URLS = ['https://www.htu.edu.cn/8955/list', 'https://www.htu.edu.cn/8957/list', 'https://www.htu.edu.cn/xsygcs/list',
+        'https://www.htu.edu.cn/8954/list', 'https://www.htu.edu.cn/teaching/3257/list',
+        'https://www.htu.edu.cn/teaching/3251/list', 'https://www.htu.edu.cn/teaching/3258/list',
+        'https://www.htu.edu.cn/teaching/kwgl/list']
+MESSAGES = ['通知公告', '院部动态', '学术预告', '师大新闻', '教学新闻', '教务通知', '公示公告', '考务管理']
+RULES = [
+    {
+        "urls": 'div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_Title a',
+        "times": 'div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate'
+    },
+    {
+        "urls": 'ul.news_list li.news span.news_title a',
+        "times": 'ul.news_list li.news span.news_meta'
+    }
+]
 
 
+# 检测是否相同
 def ifUpdate(limit, new_title):
     last_title = [os.environ.get(LAST_TITLE_KEY[0], '1'), os.environ.get(LAST_TITLE_KEY[1], '2'),
                   os.environ.get(LAST_TITLE_KEY[2], '3'), os.environ.get(LAST_TITLE_KEY[3], '4'),
-                  os.environ.get(LAST_TITLE_KEY[4], '5')]
+                  os.environ.get(LAST_TITLE_KEY[4], '5'), os.environ.get(LAST_TITLE_KEY[5], '6'),
+                  os.environ.get(LAST_TITLE_KEY[6], '7'), os.environ.get(LAST_TITLE_KEY[7], '8')]
     print(last_title)
     print(new_title)
     if last_title[int(limit / 1000) - 1] == new_title:
@@ -23,6 +42,7 @@ def ifUpdate(limit, new_title):
         return False
 
 
+# 如果相同直接返回GitHub上的news.json
 def json_data(limit, count):
     res_data = requests.get('https://raw.githubusercontent.com/JiaLiFuNia/HNUNewsAPI/master/api/news.json').json()[
         'data']
@@ -40,7 +60,8 @@ def json_data(limit, count):
         return data
 
 
-def geturl(url, limit, count):
+# 获取页面的所有新闻
+def geturl(url, limit, count, rule):
     data = []
     pages = 8
     id_num = limit
@@ -53,9 +74,10 @@ def geturl(url, limit, count):
             # print(url_list)
             response = requests.get(url_list)
             soup = BeautifulSoup(response.content, 'html.parser')
-            titles = urls = soup.select(
-                'div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_Title a')
-            times = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate')
+            titles = urls = soup.select(RULES[rule]['urls'])
+            times = soup.select(RULES[rule]['times'])
+            if len(titles) == 0:
+                break
             if page == 0:
                 if ifUpdate(limit, titles[4].get('title')):
                     data = json_data(limit, count)
@@ -87,88 +109,51 @@ def geturl(url, limit, count):
         return data
 
 
-def an(count):
-    url = 'https://www.htu.edu.cn/8955/list'
-    data = geturl(url, 1000, count)
-    code = 200
-    message = '通知公告'
-    app.json.ensure_ascii = False
-    return code, message, data
-
-
-def bn(count):
-    url = 'https://www.htu.edu.cn/8957/list'
-    data = geturl(url, 2000, count)
-    code = 200
-    message = '院部动态'
-    app.json.ensure_ascii = False
-    return code, message, data
-
-
-def cn(count):
-    url = 'https://www.htu.edu.cn/xsygcs/list'
-    data = geturl(url, 3000, count)
-    code = 200
-    message = '学术预告'
-    app.json.ensure_ascii = False
-    return code, message, data
-
-
-def dn(count):
-    url = 'https://www.htu.edu.cn/8954/list'
-    data = geturl(url, 4000, count)
-    code = 200
-    message = '师大新闻'
-    app.json.ensure_ascii = False
-    return code, message, data
-
-
-def en(count):
-    url = 'https://www.htu.edu.cn/9008/list'
-    data = geturl(url, 5000, count)
-    code = 200
-    message = '媒体师大'
-    app.json.ensure_ascii = False
+#
+def xn(types, count, rule):
+    code = 201
+    message = '非法请求'
+    data = []
+    try:
+        index = ALL_TYPES.index(types)
+    except:
+        index = -1
+    if index != -1:
+        data = geturl(URLS[index], LIMIT[index], count, rule)
+        code = 200
+        message = MESSAGES[index]
+    else:
+        if types == 'tabs':
+            code = 200
+            message = 'success'
+            data = [
+                {
+                    "title": "通知公告",
+                    "id": "1"
+                },
+                {
+                    "title": "师大新闻",
+                    "id": "2"
+                },
+                {
+                    "title": "院部动态",
+                    "id": "3"
+                }
+            ]
+        if types == 'all':
+            code = 200
+            message = 'success'
+            data = json_data(0, 0)
+    if len(data) == 0:
+        code = 201
+        message = '非法请求'
     return code, message, data
 
 
 @app.route("/<string:types>", methods=['get'])
 def home(types):
-    count = 0
-    code = 201
-    message = '非法请求'
-    data = []
-    if types == 'an':
-        code, message, data = an(count)
-    if types == 'bn':
-        code, message, data = bn(count)
-    if types == 'cn':
-        code, message, data = cn(count)
-    if types == 'dn':
-        code, message, data = dn(count)
-    if types == 'en':
-        code, message, data = dn(count)
-    if types == 'tabs':
-        code = 200
-        message = 'success'
-        data = [
-            {
-                "title": "通知公告",
-                "id": "1"
-            },
-            {
-                "title": "师大新闻",
-                "id": "2"
-            },
-            {
-                "title": "院部动态",
-                "id": "3"
-            }
-        ]
-    if types == 'all':
-        code = 200
-        message = 'success'
-        data = json_data(0, 0)
+    code, message, data = xn(types, 0, 0)
+    app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
@@ -176,23 +161,7 @@ def home(types):
 def getnews():
     types = request.values.get("types")
     count = int(request.values.get("count"))
-    code = 201
-    message = '非法请求'
-    data = []
-    if types == 'an':
-        code, message, data = an(count)
-    if types == 'bn':
-        code, message, data = bn(count)
-    if types == 'cn':
-        code, message, data = cn(count)
-    if types == 'dn':
-        code, message, data = dn(count)
-    if types == 'en':
-        code, message, data = en(count)
-    if types == 'all':
-        code = 200
-        message = 'success'
-        data = json_data(0, 0)
+    code, message, data = xn(types, count, 0)
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
@@ -206,9 +175,17 @@ def getAllNews():
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
+@app.route('/jw', methods=['post'])
+def get_jw_news():
+    types = request.values.get("types")
+    count = int(request.values.get("count"))
+    code, message, data = xn(types, count, 1)
+    app.json.ensure_ascii = False
+    return jsonify({'code': code, 'message': message, 'data': data})
+
+
 def save_all_news():
-    count = 0
-    data = an(count)[2] + bn(count)[2] + cn(count)[2] + dn(count)[2] + en(count)[2]
+    data = xn('an', 0, 0)[2] + xn('bn', 0, 0)[2] + xn('cn', 0, 0)[2] + xn('dn', 0, 0)[2] + xn('en', 0, 0)[2]
     json_dict = {'code': 200, 'message': 'success', 'data': data}
     with open("news.json", 'w', encoding='utf-8') as file:
         file.write(json.dumps(json_dict, ensure_ascii=False))
