@@ -202,7 +202,7 @@ def save_all_news():
     print('success')
 
 
-save_all_news()
+# save_all_news()
 
 
 if __name__ == '__main__':
