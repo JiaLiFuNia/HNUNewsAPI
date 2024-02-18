@@ -23,16 +23,20 @@ def ifUpdate(limit, new_title):
         return False
 
 
-def json_data(limit):
+def json_data(limit, count):
     res_data = requests.get('https://raw.githubusercontent.com/JiaLiFuNia/HNUNewsAPI/master/api/news.json').json()[
         'data']
     data = []
+    counts = 0
     if limit == 0:
         return res_data
     else:
         for i in res_data:
             if str(i['id'])[0] == str(limit)[0]:
+                counts = counts + 1
                 data.append(i)
+            if counts == count:
+                break
         return data
 
 
@@ -54,7 +58,7 @@ def geturl(url, limit, count):
             times = soup.select('div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate')
             if page == 0:
                 if ifUpdate(limit, titles[4].get('title')):
-                    data = json_data(limit)
+                    data = json_data(limit, count)
                     break
                 else:
                     os.environ[LAST_TITLE_KEY[int(limit / 1000) - 1]] = titles[4].get('title')
