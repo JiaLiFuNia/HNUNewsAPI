@@ -109,7 +109,7 @@ def geturl(url, limit, count, rule):
         return data
 
 
-#
+# 类型 数量 规则
 def xn(types, count, rule):
     code = 201
     message = '非法请求'
@@ -150,6 +150,7 @@ def xn(types, count, rule):
     return code, message, data
 
 
+# @GET
 @app.route("/<string:types>", methods=['get'])
 def home(types):
     code, message, data = xn(types, 0, 0)
@@ -157,6 +158,7 @@ def home(types):
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
+# @POST
 @app.route('/', methods=['post'])
 def getnews():
     types = request.values.get("types")
@@ -166,6 +168,7 @@ def getnews():
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
+# @GET
 @app.route("/", methods=['get'])
 def getAllNews():
     code = 200
@@ -175,6 +178,7 @@ def getAllNews():
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
+# @POST
 @app.route('/jw', methods=['post'])
 def get_jw_news():
     types = request.values.get("types")
@@ -184,6 +188,7 @@ def get_jw_news():
     return jsonify({'code': code, 'message': message, 'data': data})
 
 
+# 保存文件
 def save_all_news():
     data = xn('an', 0, 0)[2] + xn('bn', 0, 0)[2] + xn('cn', 0, 0)[2] + xn('dn', 0, 0)[2] + xn('en', 0, 0)[2]
     json_dict = {'code': 200, 'message': 'success', 'data': data}
