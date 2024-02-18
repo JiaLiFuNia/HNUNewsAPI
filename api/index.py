@@ -35,7 +35,7 @@ def json_data(limit, count):
             if str(i['id'])[0] == str(limit)[0]:
                 counts = counts + 1
                 data.append(i)
-            if counts == count:
+            if count != 0 and counts == count:
                 break
         return data
 
@@ -168,8 +168,8 @@ def home(types):
     if types == 'all':
         code = 200
         message = 'success'
-        data = json_data(0)
-    return jsonify({'code': code, 'message': message, 'data': data, 'total': 100})
+        data = json_data(0, 0)
+    return jsonify({'code': code, 'message': message, 'data': data})
 
 
 @app.route('/', methods=['post'])
@@ -192,16 +192,16 @@ def getnews():
     if types == 'all':
         code = 200
         message = 'success'
-        data = json_data(0)
+        data = json_data(0, 0)
     app.json.ensure_ascii = False
-    return jsonify({'code': code, 'message': message, 'data': data, 'total': count})
+    return jsonify({'code': code, 'message': message, 'data': data})
 
 
 @app.route("/", methods=['get'])
 def getAllNews():
     code = 200
     message = 'success'
-    data = json_data(0)
+    data = json_data(0, 0)
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
