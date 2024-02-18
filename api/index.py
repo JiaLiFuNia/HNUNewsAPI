@@ -75,6 +75,7 @@ def geturl(url, limit, count, rule):
             response = requests.get(url_list)
             soup = BeautifulSoup(response.content, 'html.parser')
             titles = urls = soup.select(RULES[rule]['urls'])
+            print(titles)
             times = soup.select(RULES[rule]['times'])
             if len(titles) == 0:
                 break
