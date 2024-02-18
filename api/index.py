@@ -75,7 +75,6 @@ def geturl(url, limit, count, rule):
             response = requests.get(url_list)
             soup = BeautifulSoup(response.content, 'html.parser')
             titles = urls = soup.select(RULES[rule]['urls'])
-            print(titles)
             times = soup.select(RULES[rule]['times'])
             if len(titles) == 0:
                 break
@@ -116,11 +115,8 @@ def xn(types: str, count: int):
     message = '非法请求'
     data = []
     rule = 0
-    try:
+    if types in ALL_TYPES:
         index = ALL_TYPES.index(types)
-    except IndexError:
-        index = -1
-    if index != -1:
         if types[-1] == 'j':
             rule = 1
         data = geturl(URLS[index], LIMIT[index], count, rule)
