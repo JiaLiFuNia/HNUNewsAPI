@@ -1,2 +1,4 @@
 text = ['l', 'k']
-print(text.index('5'))
+a = 5
+b = 6
+print(max(a, b))
