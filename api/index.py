@@ -18,8 +18,8 @@ URLS = ['https://www.htu.edu.cn/8955/list', 'https://www.htu.edu.cn/8957/list', 
 MESSAGES = ['通知公告', '院部动态', '学术预告', '师大新闻', '教学新闻', '教务通知', '公示公告', '考务管理']
 RULES = [
     {
-        "urls": 'div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_Title a',
-        "times": 'div#wp_news_w15 ul.wp_article_list li.list_item div.fields span.Article_PublishDate'
+        "urls": 'ul.news_list > li.news > div.wz > div.news_title > a',
+        "times": 'ul.news_list > li.news > div.wz > div.news_time'
     },
     {
         "urls": 'ul.news_list li.news span.news_title a',
