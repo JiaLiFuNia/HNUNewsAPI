@@ -8,14 +8,14 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 LAST_TITLE_KEY = ['LAST_TITLE_AN_KEY', 'LAST_TITLE_BN_KEY', 'LAST_TITLE_CN_KEY', 'LAST_TITLE_DN_KEY',
-                  'LAST_TITLE_EN_KEY', 'LAST_TITLE_EN_KEY', 'LAST_TITLE_EN_KEY', 'LAST_TITLE_EN_KEY']
-ALL_TYPES = ['an', 'bn', 'cn', 'dn', 'aj', 'bj', 'cj', 'dj']
-LIMIT = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000]
+                  'LAST_TITLE_EN_KEY', 'LAST_TITLE_FN_KEY', 'LAST_TITLE_GN_KEY', 'LAST_TITLE_HN_KEY']
+ALL_TYPES = ['an', 'bn', 'cn', 'dn', 'aj', 'bj', 'cj', 'dj', 'pic']
+LIMIT = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000]
 URLS = ['https://www.htu.edu.cn/8955/list', 'https://www.htu.edu.cn/8957/list', 'https://www.htu.edu.cn/xsygcs/list',
         'https://www.htu.edu.cn/8954/list', 'https://www.htu.edu.cn/teaching/3257/list',
         'https://www.htu.edu.cn/teaching/3251/list', 'https://www.htu.edu.cn/teaching/3258/list',
-        'https://www.htu.edu.cn/teaching/kwgl/list']
-MESSAGES = ['通知公告', '院部动态', '学术预告', '师大新闻', '教学新闻', '教务通知', '公示公告', '考务管理']
+        'https://www.htu.edu.cn/teaching/kwgl/list', 'https://www.htu.edu.cn']
+MESSAGES = ['通知公告', '院部动态', '学术预告', '师大新闻', '教学新闻', '教务通知', '公示公告', '考务管理', '主页图片']
 RULES = [
     {
         "urls": 'ul.news_list > li.news > div.wz > div.news_title > a',
@@ -24,6 +24,9 @@ RULES = [
     {
         "urls": 'ul.news_list li.news span.news_title a',
         "times": 'ul.news_list li.news span.news_meta'
+    },
+    {
+        "urls": 'div#banner div.inner ul.news_list li.news div.imgs a img'
     }
 ]
 
@@ -69,44 +72,53 @@ def geturl(url, limit, count, rule):
     if url == "":
         return data
     else:
-        for page in range(pages):
-            url_list = str(url) + str(page + 1) + ".htm"
-            # print(url_list)
-            response = requests.get(url_list)
-            soup = BeautifulSoup(response.content, 'html.parser')
-            titles = urls = soup.select(RULES[rule]['urls'])
-            times = soup.select(RULES[rule]['times'])
-            if len(titles) == 0:
-                break
-            if page == 0:
-                if ifUpdate(limit, titles[4].get('title')):
-                    data = json_data(limit, count)
+        if rule != 2:
+            for page in range(pages):
+                url_list = str(url) + str(page + 1) + ".htm"
+                # print(url_list)
+                response = requests.get(url_list)
+                soup = BeautifulSoup(response.content, 'html.parser')
+                titles = urls = soup.select(RULES[rule]['urls'])
+                times = soup.select(RULES[rule]['times'])
+                if len(titles) == 0:
                     break
+                if page == 0:
+                    if ifUpdate(limit, titles[4].get('title')):
+                        data = json_data(limit, count)
+                        break
+                    else:
+                        os.environ[LAST_TITLE_KEY[int(limit / 1000) - 1]] = titles[4].get('title')
                 else:
-                    os.environ[LAST_TITLE_KEY[int(limit / 1000) - 1]] = titles[4].get('title')
-            else:
-                pass
-            for i in range(len(titles)):
-                id_num = id_num + 1
-                url_temp = urls[i].get('href')
-                if url_temp[0] != 'h':
-                    url_temp = 'https://www.htu.edu.cn' + url_temp
-                json_dict = {
-                    'id': id_num,
-                    'title': titles[i].get('title'),
-                    'time': times[i].text,
-                    'url': url_temp
-                }
-                data.append(json_dict)
-                print(json_dict)
-                if count > 100 or count <= 0:
-                    count = 100
-                if id_num - limit == count:
-                    ifBreak = 1
+                    pass
+                for i in range(len(titles)):
+                    id_num = id_num + 1
+                    url_temp = urls[i].get('href')
+                    if url_temp[0] != 'h':
+                        url_temp = 'https://www.htu.edu.cn' + url_temp
+                    json_dict = {
+                        'id': id_num,
+                        'title': titles[i].get('title'),
+                        'time': times[i].text,
+                        'url': url_temp
+                    }
+                    data.append(json_dict)
+                    print(json_dict)
+                    if count > 100 or count <= 0:
+                        count = 100
+                    if id_num - limit == count:
+                        ifBreak = 1
+                        break
+                if ifBreak == 1:
                     break
-            if ifBreak == 1:
-                break
-        return data
+            print(data)
+            return data
+        else:
+            response = requests.get(url)
+            soup = BeautifulSoup(response.content, 'html.parser')
+            urls = soup.select(RULES[rule]['urls'])
+            data = [url+img_url.get('src') for img_url in urls]
+            print(data)
+            return data
 
 
 # 类型 数量 规则
@@ -119,6 +131,8 @@ def xn(types: str, count: int):
         index = ALL_TYPES.index(types)
         if types[-1] == 'j':
             rule = 1
+        if types[-1] == 'c':
+            rule = 2
         data = geturl(URLS[index], LIMIT[index], count, rule)
         code = 200
         message = MESSAGES[index]
@@ -160,7 +174,7 @@ def home(types):
 
 # @POST
 @app.route('/', methods=['post'])
-def getnews():
+def getNews():
     types = request.values.get("types")
     count = int(request.values.get("count"))
     code, message, data = xn(types, count)
