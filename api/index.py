@@ -12,55 +12,30 @@ LAST_TITLE_KEY = ['LAST_TITLE_AN_KEY', 'LAST_TITLE_BN_KEY', 'LAST_TITLE_CN_KEY',
 ALL_TYPES = ['an', 'bn', 'cn', 'dn', 'aj', 'bj', 'cj', 'dj', 'pic']
 LIMIT = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000]
 URLS = ['https://www.htu.edu.cn/8955/list', 'https://www.htu.edu.cn/8957/list', 'https://www.htu.edu.cn/xsygcs/list',
-        'https://www.htu.edu.cn/8954/list', 'https://www.htu.edu.cn/teaching/3257/list',
+        'https://www.htu.edu.cn/8954/list.htm', 'https://www.htu.edu.cn/teaching/3257/list',
         'https://www.htu.edu.cn/teaching/3251/list', 'https://www.htu.edu.cn/teaching/3258/list',
         'https://www.htu.edu.cn/teaching/kwgl/list', 'https://www.htu.edu.cn']
-MESSAGES = ['通知公告', '院部动态', '学术预告', '师大新闻', '教学新闻', '教务通知', '公示公告', '考务管理', '主页图片']
+MESSAGES = ['通知公告', '新闻速递', '学术预告', '师大新闻', '教学新闻', '教务通知', '公示公告', '考务管理', '主页图片']
 RULES = [
     {
-        "urls": 'ul.news_list > li.news > div.wz > div.news_title > a',
-        "times": 'ul.news_list > li.news > div.wz > div.news_time'
+        "urls": 'ul.news_list li.news a',
+        "times": 'ul.news_list li.news a div.news_meta',
+        "titles": "ul.news_list li.news a div.wz div.news_title"
     },
     {
         "urls": 'ul.news_list li.news span.news_title a',
-        "times": 'ul.news_list li.news span.news_meta'
+        "times": 'ul.news_list li.news span.news_meta',
+        "titles": 'ul.news_list li.news span.news_title a'
     },
     {
         "urls": 'div#banner div.inner ul.news_list li.news div.imgs a img'
+    },
+    {
+        "urls": 'ul.news_list li.news div.news_title a',
+        "times": 'ul.news_list li.news div.news_time',
+        "titles": "ul.news_list li.news div.news_title a"
     }
 ]
-
-
-# 检测是否相同
-def ifUpdate(limit, new_title):
-    last_title = [os.environ.get(LAST_TITLE_KEY[0], '1'), os.environ.get(LAST_TITLE_KEY[1], '2'),
-                  os.environ.get(LAST_TITLE_KEY[2], '3'), os.environ.get(LAST_TITLE_KEY[3], '4'),
-                  os.environ.get(LAST_TITLE_KEY[4], '5'), os.environ.get(LAST_TITLE_KEY[5], '6'),
-                  os.environ.get(LAST_TITLE_KEY[6], '7'), os.environ.get(LAST_TITLE_KEY[7], '8')]
-    print(last_title)
-    print(new_title)
-    if last_title[int(limit / 1000) - 1] == new_title:
-        return True
-    else:
-        return False
-
-
-# 如果相同直接返回GitHub上的news.json
-def json_data(limit, count):
-    res_data = requests.get('https://raw.githubusercontent.com/JiaLiFuNia/HNUNewsAPI/master/api/news.json').json()[
-        'data']
-    data = []
-    counts = 0
-    if limit == 0:
-        return res_data
-    else:
-        for i in res_data:
-            if str(i['id'])[0] == str(limit)[0]:
-                counts = counts + 1
-                data.append(i)
-            if count != 0 and counts == count:
-                break
-        return data
 
 
 # 获取页面的所有新闻
@@ -73,32 +48,35 @@ def geturl(url, limit, count, rule):
         return data
     else:
         if rule != 2:
+            print(pages)
             for page in range(pages):
                 url_list = str(url) + str(page + 1) + ".htm"
                 # print(url_list)
                 response = requests.get(url_list)
                 soup = BeautifulSoup(response.content, 'html.parser')
-                titles = urls = soup.select(RULES[rule]['urls'])
-                times = soup.select(RULES[rule]['times'])
+                if "8957" or "8954" in url.split("/"):
+                    titles = soup.select(RULES[-1]['titles'])
+                    urls = soup.select(RULES[-1]['urls'])
+                    times = soup.select(RULES[-1]['times'])
+                else:
+                    titles = soup.select(RULES[rule]['titles'])
+                    urls = soup.select(RULES[rule]['urls'])
+                    times = soup.select(RULES[rule]['times'])
                 if len(titles) == 0:
                     break
-                if page == 0:
-                    if ifUpdate(limit, titles[4].get('title')):
-                        data = json_data(limit, count)
-                        break
-                    else:
-                        os.environ[LAST_TITLE_KEY[int(limit / 1000) - 1]] = titles[4].get('title')
-                else:
-                    pass
                 for i in range(len(titles)):
                     id_num = id_num + 1
                     url_temp = urls[i].get('href')
                     if url_temp[0] != 'h':
                         url_temp = 'https://www.htu.edu.cn' + url_temp
+                    if times[i].get("date") is None:
+                        time = times[i].text
+                    else:
+                        time = times[i].get("date")
                     json_dict = {
                         'id': id_num,
-                        'title': titles[i].get('title'),
-                        'time': times[i].text,
+                        'title': titles[i].text,
+                        'time': time,
                         'url': url_temp
                     }
                     data.append(json_dict)
@@ -133,6 +111,8 @@ def xn(types: str, count: int):
             rule = 1
         if types[-1] == 'c':
             rule = 2
+        else:
+            pass
         data = geturl(URLS[index], LIMIT[index], count, rule)
         code = 200
         message = MESSAGES[index]
@@ -157,7 +137,7 @@ def xn(types: str, count: int):
         if types == 'all':
             code = 200
             message = 'success'
-            data = json_data(0, 0)
+            data = []
     if len(data) == 0:
         code = 201
         message = '非法请求'
@@ -187,7 +167,7 @@ def getNews():
 def getAllNews():
     code = 200
     message = 'success'
-    data = json_data(0, 0)
+    data = []
     app.json.ensure_ascii = False
     return jsonify({'code': code, 'message': message, 'data': data})
 
