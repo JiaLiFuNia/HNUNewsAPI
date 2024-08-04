@@ -2,7 +2,7 @@
 该项目使用GitHub+Vercel搭建，使用Python+flask框架实现，获取的数据来源于[河南师范大学官网](https://www.htu.edu.cn/)，本项目已开源在[GitHub](https://github.com/JiaLiFuNia/HNUNewsAPI)  
 
 __请求地址：http://hnu.xhand.fun/__  
-### __GET请求参数：__  
+### __GET请求：__  
 |  类型   |           请求链接           |
 |:-----:|:------------------------:|
 | 通知公告  | http://hnu.xhand.fun/an  |
@@ -12,7 +12,8 @@ __请求地址：http://hnu.xhand.fun/__
 | 主页轮播图 | http://hnu.xhand.fun/pic |
 
 
-### __POST请求参数：__  
+### __POST请求：__  
+#### 请求参数
 |  字段   | 说明 |   类型   |        备注        | 是否必填 |
 |:-----:|:--:|:------:|:----------------:|:----:|
 | types | 类型 | String |        无         |  是   |
