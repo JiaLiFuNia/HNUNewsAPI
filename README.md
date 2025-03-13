@@ -1,7 +1,7 @@
 ## [HNU](https://www.htu.edu.cn/)新闻api
 该项目使用GitHub+Vercel搭建，使用Python+flask框架实现，获取的数据来源于[河南师范大学官网](https://www.htu.edu.cn/)，本项目已开源在[GitHub](https://github.com/JiaLiFuNia/HNUNewsAPI)  
 
-__请求地址：http://hnu.xhand.fun/__  
+__请求地址：http://hnu.xhand.fun/（域名已过期）__  
 ### __GET请求：__  
 |  类型   |           请求链接           |
 |:-----:|:------------------------:|
